@@ -13,6 +13,12 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = 'raphael'
 api = Api(app)
 
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
+
+
 # jwt va générer automatiquement le système d'authentification en "/auth"
 jwt = JWT(app, authenticate, identity)
 

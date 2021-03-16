@@ -4,7 +4,8 @@ from models.item import ItemModel
 
 
 class Item(Resource):
-    # permet de vérifier le format des données et d'obliger la présence de certains paramètres
+    # permet de vérifier le format des données et d'obliger la présence de
+    # certains paramètres
     parser = reqparse.RequestParser()
     parser.add_argument('price',
                         type=float,
@@ -21,7 +22,8 @@ class Item(Resource):
 
     def post(self, name):
         if ItemModel.find_by_name(name):
-            return {"message": "An item with name '{}' already exists.".format(name)}, 400
+            return {"message": "An item with name \
+            '{}' already exists.".format(name)}, 400
 
         data = Item.parser.parse_args()
 
@@ -57,18 +59,6 @@ class Item(Resource):
 
 class ItemList(Resource):
     def get(self):
-
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-
-        query = "SELECT * FROM items"
-        cursor.execute(query)
-
-        items = []
-
-        for row in cursor:
-            items.append({"name": row[0], "price": row[1]})
-
-        connection.close()
-
-        return items, 201
+        return {"items": [item.json() for item in ItemModel.query.all()]}
+        # return {"items" : list(map(lambda x : x.json(),
+        #                        ItemModel.query.all()))}
